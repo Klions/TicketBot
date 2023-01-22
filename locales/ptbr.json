@@ -1,0 +1,69 @@
+{
+  "embeds": {
+    "openTicket": {
+      "title": "Abrir ticket",
+      "description": "Para abrir um ticket clique no botão abaixo",
+      "footer": {
+        "text": "Ticket • Osasco SP"
+      }
+    },
+    "ticketOpened": {
+      "title": "Ticket CATEGORYNAME",
+      "description": "Um staff responderá seu ticket assim que possível!",
+      "footer": {
+        "text": "Ticket • Osasco SP"
+      }
+    },
+    "ticketClosed": {
+      "title": "Ticket fechado",
+      "description": "O ticket foi fechado por CLOSERNAME com o seguinte motivo:\n```\nREASON\n```"
+    },
+    "ticketClosedDM": {
+      "title": "Ticket fechado",
+      "description": "Seu ticket `#TICKETCOUNT` foi fechado por CLOSERNAME com o seguinte motivo:\n```\nREASON\n```O ticket foi transcrito em: TRANSCRIPTURL",
+      "footer": {
+        "text": "Ticket • Osasco SP"
+      }
+    }
+  },
+  "modals": {
+    "reasonTicketOpen": {
+      "title": "Abrir ticket",
+      "label": "Motivo para abrir o ticket",
+      "placeholder": "Entre com um motivo para abertura do ticket"
+    },
+    "reasonTicketClose": {
+      "title": "Fechar ticket",
+      "label": "Motivo de fechar o ticket",
+      "placeholder": "Entre com um motivo para o fechamento do ticket"
+    }
+  },
+  "buttons": {
+    "close": {
+      "label": "Fechar ticket",
+      "emoji": "🔒"
+    },
+    "claim": {
+      "label": "Assumir",
+      "emoji": "🙋"
+    }
+  },
+  "ticketOpenedMessage": "Ticket aberto! TICKETCHANNEL",
+  "ticketOnlyClaimableByStaff": "O ticket só pode ser assumido por algum STAFF!",
+  "ticketOnlyModerator": "Esta ação só pode ser efetuada por CARGOSDESIGNAR!",
+  "ticketAlreadyClaimed": "O ticket já foi assumido por alguém!",
+  "ticketClaimedMessage": "> Ticket assumido por USER",
+  "ticketOnlyClosableByStaff": "Apenas STAFF consegue fechar o ticket!",
+  "ticketAlreadyClosed": "O ticket já foi fechado!",
+  "ticketCreatingTranscript": "> Transcrevendo ticket...",
+  "ticketTranscriptCreated": "> Transcrição criada!\nTRANSCRIPTURL",
+  "ticketLimitReached": "Você só pode ter TICKETLIMIT ticket aberto ao mesmo tempo!",
+  "ticketCloseAutomatico": "Possuia um ticket aberto que foi excluído automaticamente. Tente abrir novamente um ticket.",
+  "other": {
+    "openTicketButtonMSG": "Abrir ticket",
+    "deleteTicketButtonMSG": "Deletar ticket",
+    "selectTicketTypePlaceholder": "Selecione o tipo de ticket",
+    "claimedBy": "**Assumido por**: USER",
+    "noReasonGiven": "Sem um motivo específico"
+  }
+}
