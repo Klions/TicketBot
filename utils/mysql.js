@@ -21,6 +21,8 @@ setInterval(function(){
     }
 }, 1 * 1000);
 
+// cb_discord - servidor, config '{"SubTen":"0", "Tenen": "0"}, time
+
 async function AtualizarDB(){
     console.log('AtualizarDB()');
     pool.getConnection(async function(err, connection) {
