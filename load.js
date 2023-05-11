@@ -59,10 +59,12 @@ process.stdout.write(`
 Conectando ao Discord...`)
 
 const client = new Client({ intents: [
-  GatewayIntentBits.Guilds,
-  GatewayIntentBits.GuildMessages,
-  GatewayIntentBits.MessageContent,
-  GatewayIntentBits.GuildMembers
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildInvites,
+	GatewayIntentBits.GuildVoiceStates,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.MessageContent
 ] });
 
 // All variables stored in the client object
@@ -71,8 +73,6 @@ client.discord = require('discord.js');
 client.config = jsonc.parse(fs.readFileSync(path.join(__dirname, 'config/config.jsonc'), 'utf8'));
 
 var mysqlfile = require("./utils/mysql.js");
-client.locales = require(`./locales/${client.config.lang}.json`);
-client.embeds = client.locales.embeds;
 client.log = require("./utils/logs.js").log;
 client.embedcustom = require("./utils/embeds.js").embedcustom;
 client.update_ticket = require("./utils/update_ticket.js").update_ticket;
@@ -94,6 +94,20 @@ client.msToHm = function dhm (ms) {
   if (sec > 0) return `${sec}s`;
   return "0s";
 }
+
+setInterval(async function(){
+	await mysqlfile.AtualizarCalls(client);
+}, 1 * 15 * 1000);
+
+setTimeout(async function(){
+	await mysqlfile.AtualizarRoles(client);
+	await mysqlfile.AtualizarMembros(client);
+}, 1 * 30 * 1000);
+setInterval(async function(){
+	await mysqlfile.AtualizarRoles(client);
+	await mysqlfile.AtualizarMembros(client);
+}, 10 * 60 * 1000);
+
 
 // Command handler
 client.commands = new Collection();
@@ -138,3 +152,4 @@ for (const file of eventFiles) {
 client.login(token);
 
 var deploycmds = require('./deploy-commands.js');
+deploycmds.commandsServer(client);

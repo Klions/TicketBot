@@ -1,79 +1,9 @@
 {
-  "clientId": "676129092193746952", // The id of the discord bot
+  "servidores": [
+    "1065276691238371469"
+  ],
+  "clientId": "1026965930959454218", // The id of the discord bot
   "guildId": "641483788798656513", // The id of the discord server
-  "mainColor": "f6c42f", // The hex color of the embeds by default
-  "lang": "ptbr", // If you want to set english please set "main"
+  "mainColor": "f6c42f" // The hex color of the embeds by default
 
-  "closeTicketCategoryId": "1065442635277402254", // The id of the category where a closed ticket will be moved to
-  "openTicketChannelId": "1062803010465570867", // The id of the channel where the message to create a ticket will be sent
-  
-  "ticketTypes": [ // You have a limit of 25 types (the limit of Discord)
-    {
-      "codeName": "denuncia", // The name need to be in lowercase
-      "name": "Denúncia", // The name that will be displayed in the ticket
-      "description": "Denuncie jogadores por quebra de regras", // The description of the Ticket in Create Ticket Menu
-      "emoji": "🛑", // The emoji of the type (can be blank)
-      "color": "f6c42f", // Can be a hex color or blank to use the main color
-      "categoryId": "1065443601405984808", // The category id where the tickets will be created
-      "customDescription": "Conte com detalhes o que aconteceu. Faça upload dos vídeos das provas no YouTube e envie aqui no chat.\n\nMotivo: REASON", // The custom description of the ticket type (set to blank to use the default description)
-      "askReason": true, // If the bot should ask the reason of the ticket
-      "modals": [
-        ["motivo", "Detalhes do Ocorrido", "Conte com detalhes o que aconteceu", "Paragraph", 256],
-        ["denunciado", "ID do Denunciado", "Digite o ID do jogador que está denunciando", "Short", 8]
-      ], // If the bot should ask the reason of the ticket
-      "cargosId": ["1065701635248111726"]
-    },
-    {
-      "codeName": "revisaopunicao", // The name need to be in lowercase
-      "name": "Revisão de Punição", // The name that will be displayed in the ticket
-      "description": "Revise uma punição com contraprovas", // The description of the Ticket in Create Ticket Menu
-      "emoji": "💡", // The emoji of the type (can be blank)
-      "color": "#f8312f", // Can be a hex color or blank to use the main color
-      "categoryId": "1065710709733851166", // The category id where the tickets will be created
-      "customDescription": "**Siga o modelo:**\n```\nStaff: (staff que aplicou a advertência)\nPrint: (print da advertência)\nContraprovas: (sua contraprova para revogação da advertência)```\n*Somente links do youtube ou medal serão aceitos como contraprovas*", // The custom description of the ticket type (set to blank to use the default description)
-      "askReason": false, // If the bot should ask the reason of the ticket
-      "cargosId": ["1065701635248111726"]
-    },
-    {
-      "codeName": "denunciastaff", // The name need to be in lowercase
-      "name": "Denúncia STAFF", // The name that will be displayed in the ticket
-      "description": "Denuncie STAFFs por alguma quebra de regra ou abuso de poder", // The description of the Ticket in Create Ticket Menu
-      "emoji": "🛑", // The emoji of the type (can be blank)
-      "color": "#f8312f", // Can be a hex color or blank to use the main color
-      "categoryId": "1065732364724080652", // The category id where the tickets will be created
-      "customDescription": "", // The custom description of the ticket type (set to blank to use the default description)
-      "askReason": false, // If the bot should ask the reason of the ticket
-      "cargosId": ["1065701635248111726"]
-    },
-    {
-      "codeName": "duvidasvip", // The name need to be in lowercase
-      "name": "Dúvidas VIP", // The name that will be displayed in the ticket
-      "description": "Tire todas as dúvidas sobre VIPs", // The description of the Ticket in Create Ticket Menu
-      "emoji": "🛑", // The emoji of the type (can be blank)
-      "color": "#f8312f", // Can be a hex color or blank to use the main color
-      "categoryId": "1065732364724080652", // The category id where the tickets will be created
-      "customDescription": "", // The custom description of the ticket type (set to blank to use the default description)
-      "askReason": false, // If the bot should ask the reason of the ticket
-      "cargosId": ["1062814132891570227"]
-    }
-  ],
-  "ticketNameOption": "Ticket-TICKETCOUNT", // Here is all parameter: USERNAME, USERID, TICKETCOUNT
-  "rolesWhoHaveAccessToTheTickets": [
-    "1062814132891570227"
-  ], // Roles who can access to the tickets
-  "rolesModerator": [
-    "1062815962618933289", "1062815952825237564", 
-    "1062815790077853696", "1062815586003988580", 
-    "1062814132891570227"
-  ],
-  "pingRoleWhenOpened": true,
-  "logs": true,
-  "logsChannelId": "1062803101779763320", // The id of the channel where the logs will be sent
-  "logsTranscriptLog": "1062803614638276689", // The id of the channel where the logs will be sent
-  
-  "claimButton": true,
-  "whoCanCloseTicket": "EVERYONE", // STAFFONLY (roles configured at "rolesWhoHaveAccessToTheTickets") or EVERYONE
-  "closeButton": true, // If false the ticket can be closed only by doing /closes
-  "askReasonWhenClosing": true, // If false the ticket will be closed without asking the reason
-  "maxTicketOpened": 100 // The number of tickets the user can open while another one is already open. Set to 0 to unlimited
 }

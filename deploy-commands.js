@@ -9,7 +9,7 @@ const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
-const { clientId, guildId } = jsonc.parse(fs.readFileSync(path.join(__dirname, 'config/config.jsonc'), 'utf8'));
+const { clientId, servidores } = jsonc.parse(fs.readFileSync(path.join(__dirname, 'config/config.jsonc'), 'utf8'));
 
 for (const file of commandFiles) {
 	const filePath = path.join(commandsPath, file);
@@ -17,8 +17,20 @@ for (const file of commandFiles) {
 	commands.push(command.data.toJSON());
 }
 
+
 const rest = new REST({ version: '10' }).setToken(token);
 
-rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-	.then(() => console.log('Todos os comandos foram registrados na aplicação com sucesso.'))
-	.catch(console.error);
+module.exports = {
+	async commandsServer(client) {
+		for (const server of servidores) {
+			const guild = await client.guilds.cache.get(server);
+			if(guild){
+				rest.put(Routes.applicationGuildCommands(clientId, server), { body: commands })
+					.then(() => console.log('Todos os comandos foram registrados na aplicação com sucesso.'))
+					.catch(console.error);
+			}else{
+				console.log("\n⚠️⚠️⚠️ Não foi registrado os commands no servidor: '"+server+"'. ⚠️⚠️⚠️");
+			}
+		}
+	}
+  };

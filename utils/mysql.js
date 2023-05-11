@@ -10,8 +10,8 @@ var pool = mysql.createPool({
 });
 
 var exportardb;
-var timeout_banco = 2;
-AtualizarDB();
+var timeout_banco = 5;
+
 setInterval(function(){
     if(timeout_banco > 0){
         timeout_banco--;
@@ -20,6 +20,7 @@ setInterval(function(){
         timeout_banco = 5*60;
     }
 }, 1 * 1000);
+
 async function AtualizarDB(){
     console.log('AtualizarDB()');
     pool.getConnection(async function(err, connection) {
@@ -53,10 +54,10 @@ async function getUserIDPorDiscord(discord_id){
             }
         }
     }
-    return undefined;
+    return false;
 }
 
-function MySQL(query){
+async function MySQL(query){
     if(query){
       pool.getConnection(function(err, connection) {
         if(connection !== undefined){
@@ -72,7 +73,7 @@ function MySQL(query){
 }
 
 function tbl_userID(user_id){
-    var tbl = [];
+    var tbl = {};
     if(exportardb && exportardb.length > 0){
         tbl.veiculos = [];
         tbl.registration = "N/A";
@@ -93,7 +94,14 @@ function tbl_userID(user_id){
                 }else if(dado.banco === 'vrp_user_data'){
                     if(value.user_id == user_id){
                         if(value.dkey.includes('datatable')){
-                            tbl.datatable = value.dvalue;
+                            tbl.datatable = JSON.parse(value.dvalue);
+                            if(tbl.datatable){
+                                if(tbl.datatable.groups) tbl.grupos = tbl.datatable.groups;
+                                if(tbl.datatable.health) tbl.vida = tbl.datatable.health;
+                                if(tbl.datatable.armour) tbl.colete = tbl.datatable.armour;
+                                if(tbl.datatable.morto) tbl.morto = tbl.datatable.morto;
+                                if(tbl.datatable.inventory) tbl.inventario = tbl.datatable.inventory;
+                            }
                         }else if(value.dkey.includes('prisao')){
                             tbl.prisao = parseInt(value.dvalue);
                         }
@@ -132,7 +140,37 @@ function tbl_userID(user_id){
     return tbl;
 }
 
+function GETcb_discord(){
+    if(exportardb && exportardb.length > 0){
+        for (let dado of exportardb) {
+            if(dado.banco === 'cb_discord'){
+                return JSON.parse(dado.values);
+            }
+        }
+    }
+    return false;
+}
+
+async function CargoIDByName(cargo_nome){
+    var CargosDB = GETcb_discord();
+    if(CargosDB){
+        for (const cargo of CargosDB) {
+            Object.keys(CargosDB).sort().forEach((key)=>{
+                if(cargo_nome === key) return CargosDB[key];
+            });
+        }
+    }
+    return false;
+}
+
 module.exports = {
+    async userid_discord(discord_id) {
+        var user_id = await getUserIDPorDiscord(discord_id);
+        if(user_id){
+            return user_id;
+        }
+        return false;
+    },
     async mysql_discord(discord_id) {
         var user_id = await getUserIDPorDiscord(discord_id);
         if(user_id){
@@ -152,5 +190,119 @@ module.exports = {
             MySQL(QUERY.replace('USERID', user_id));
         }
         return false;
+    },
+    async mysql(query){
+        if(query){
+          pool.getConnection(function(err, connection) {
+            if(connection !== undefined){
+              if(err) console.log('MySQL Connection(): '+err);
+              connection.query( query, function(err2, rows) {
+                if(err2) console.log('MySQL(): '+query+' ERRO: '+err2);
+              });
+              connection.release();
+              timeout_banco = 10;
+            }
+          });
+        }
+    },
+    async AtualizarCalls(client){
+        if (client.config.servidores && client.config.servidores.length > 0) {
+            client.guilds.cache.forEach(guild => {
+                guild.members.fetch();
+                guild.channels.fetch();
+                guild.roles.fetch();
+            });
+            for (const server of client.config.servidores) {
+                var tabela = [];
+                const list = await client.guilds.cache.get(server);
+                if(list){
+                    var canais = [];
+                    const channels = await list.channels.cache.filter((c) => c.type === client.discord.ChannelType.GuildVoice);
+                    for (const [canalID, canal] of channels) {
+                        var membros = [];
+                        if(canal.members.size > 0){
+                            console.log(canal.name+': '+canal.members.size);
+                            for (const [memberID, member] of canal.members) {
+                                var userid = await getUserIDPorDiscord(member.id);
+                                if(userid && parseInt(userid) > 0){
+                                    membros.push({ discord: member.id, user_id: userid });
+                                }
+                            }
+                            canais.push({ 
+                                channel_id: canal.id,
+                                channel_name: canal.name,
+                                members: membros
+                            });
+                            
+                        }
+                    }
+                    tabela.push({ guild: server, channels: canais });
+                }
+                await MySQL(`INSERT INTO cb_discord(servidor, config, time) VALUES('call_${server}', '${JSON.stringify(tabela)}', '${Math.floor(Date.now() / 1000)}') ON DUPLICATE KEY UPDATE config = '${JSON.stringify(tabela)}', time = '${Math.floor(Date.now() / 1000)}';`);
+            }
+        }
+    },
+    async AtualizarRoles(client){
+        if (client.config.servidores && client.config.servidores.length > 0) {
+            console.log('AtualizarRoles()');
+            for (const server of client.config.servidores) {
+                var tabela = [];
+                const list = await client.guilds.cache.get(server);
+                if(list){
+                    var rolesdb = [];
+                    const roles = list.roles.cache;
+                    for (const [roleID, role] of roles) {
+                        rolesdb.push({ 
+                            role_id: role.id,
+                            role_name: role.name,
+                            color: role.hexColor
+                        });
+                    }
+                    tabela.push({ guild: server, roles: rolesdb });
+                }
+                await MySQL(`INSERT INTO cb_discord(servidor, config, time) VALUES('roles_${server}', '${JSON.stringify(tabela)}', '${Math.floor(Date.now() / 1000)}') ON DUPLICATE KEY UPDATE config = '${JSON.stringify(tabela)}', time = '${Math.floor(Date.now() / 1000)}';`);
+            }
+        }
+    },
+    async AtualizarMembros(client){
+        if (client.config.servidores && client.config.servidores.length > 0) {
+            console.log('AtualizarMembros()');
+            for (const server of client.config.servidores) {
+                var tabela = [];
+                const list = await client.guilds.cache.get(server);
+                if(list){
+                    var membersdb = [];
+                    const members = await list.members.cache;
+                    if(members){
+                        for (const [memberID, member] of members) {
+                            var userid = await getUserIDPorDiscord(member.id);
+                            if(userid && parseInt(userid) > 0){
+                                membersdb.push({ 
+                                    discord: member.id, 
+                                    user_id: userid,
+                                    roles: member._roles
+                                });
+                            }
+                        }
+                    }
+                    tabela.push({ guild: server, members: membersdb });
+                }
+                await MySQL(`INSERT INTO cb_discord(servidor, config, time) VALUES('members_${server}', '${JSON.stringify(tabela)}', '${Math.floor(Date.now() / 1000)}') ON DUPLICATE KEY UPDATE config = '${JSON.stringify(tabela)}', time = '${Math.floor(Date.now() / 1000)}';`);
+            }
+        }
+    },
+    async AtualizarMembrosDiscord(){
+        if (client.config.servidores && client.config.servidores.length > 0) {
+            console.log('AtualizarMembrosDiscord()');
+
+            var CargosDB = GETcb_discord();
+            for (const server of client.config.servidores) {
+                const list = await client.guilds.cache.get(server);
+                if(list){
+                    
+                }
+            }
+            
+        }
     }
 }
